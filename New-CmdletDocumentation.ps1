@@ -13,7 +13,7 @@ function New-CmdletDocumentation {
     )
     $Required_Modules = @{
         'Get-LoremIpsum.ps1' = @(
-            'Get-LorumIpsem'
+            'Get-LoremIpsum'
         )
         'Get-CommandSyntax.ps1' = @(
             'Get-CommandSyntax'
@@ -24,9 +24,9 @@ function New-CmdletDocumentation {
             try {
                 Get-Command -Name $indvCommand -ErrorAction Stop | Out-Null
             } catch {
-                $ScriptPath = "{0}\{1}" -f $PSScriptRoot, $Mod.key
+                $ScriptPath = "{0}\{1}" -f $pwd.path, $Mod.key
                 try {
-                    Import-Module $ScriptPath | Out-Null
+                    . $ScriptPath | Out-Null
                     Get-Command -Name $indvCommand -ErrorAction Stop | Out-Null
                 } catch {
                     throw [System.Management.Automation.CommandNotFoundException] "Unable to find cmdlet '$Command'. Make sure the '$($Mod.Key)' module is imported."
@@ -63,7 +63,7 @@ function New-CmdletDocumentation {
     $exCount = 1
     foreach ($example in $Help.examples.example){
         $OutArray += "### {0}`n" -f $example.title.trim('-').trim() -replace 'Example \d+', ('Example {0}' -f $exCount)
-        foreach ($line in $example.code){
+        foreach ($line in ($example.code -split "`n")){
             $OutArray += "{0}{1}" -f $spaces, $line
         }
         $OutArray += $example.remarks
