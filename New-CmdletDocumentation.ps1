@@ -24,8 +24,14 @@ function New-CmdletDocumentation {
             try {
                 Get-Command -Name $indvCommand -ErrorAction Stop | Out-Null
             } catch {
-                throw [System.Management.Automation.CommandNotFoundException] "Unable to find cmdlet '$Command'. Make sure the '$($Mod.Key) module is imported."
-                exit 1
+                $ScriptPath = "{0}\{1}" -f $PSScriptRoot, $Mod.key
+                try {
+                    Import-Module $ScriptPath | Out-Null
+                    Get-Command -Name $indvCommand -ErrorAction Stop | Out-Null
+                } catch {
+                    throw [System.Management.Automation.CommandNotFoundException] "Unable to find cmdlet '$Command'. Make sure the '$($Mod.Key)' module is imported."
+                    exit 1
+                }
             }
         }
     }
